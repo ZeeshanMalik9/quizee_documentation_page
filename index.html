@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizZee - Microservices Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 0;
+            color: white;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(120, 119, 198, 0.3), transparent 50%),
+                        radial-gradient(circle at 80% 10%, rgba(255, 118, 117, 0.3), transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            margin-bottom: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, #f093fb 50%, #f5f7fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            font-weight: 400;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .documentation-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            color: #2d3748;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .github-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: linear-gradient(135deg, #24292e 0%, #4a5568 100%);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(36, 41, 46, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .docs-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .github-btn:hover,
+        .docs-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 2rem 0;
+            border-radius: 30px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section {
+            padding: 4rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 4rem;
+            right: 4rem;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+        }
+
+        .section:last-child::after {
+            display: none;
+        }
+
+        .section h2 {
+            color: #2d3748;
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 80px;
+            height: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+        }
+        
+        .section h3 {
+            font-size: 1.8rem; 
+            margin: 2rem 0 1.5rem 0; 
+            color: #2d3748;
+            font-weight: 700;
+        }
+
+        .section-intro {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+            max-width: 800px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .feature-card h3 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .architecture-visual {
+            text-align: center;
+            margin: 4rem 0;
+            padding: 3rem;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 25px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .service-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .service-layer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .service-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .service-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .api-section {
+            margin: 3rem 0;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .service-title {
+            color: #2d3748;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .endpoint {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+
+        .endpoint:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        .endpoint.post {
+            border-left-color: #007bff;
+        }
+
+        .endpoint.get {
+            border-left-color: #28a745;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin-right: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .method-get {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .method-post {
+            background: linear-gradient(135deg, #cce5ff 0%, #b3d7ff 100%);
+            color: #004085;
+        }
+
+        .endpoint-url {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .code-block {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: #e2e8f0;
+            padding: 2rem;
+            border-radius: 15px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            box-shadow: 0 10px 25px rgba(45, 55, 72, 0.3);
+            position: relative;
+        }
+
+        .code-block::before {
+            content: '{ }';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.2rem;
+            opacity: 0.4;
+        }
+
+        .info-box {
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border-left: 5px solid;
+        }
+        
+        .info-box ul, .info-box ol {
+            margin-left: 1.5rem;
+        }
+
+        .info-box.warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .info-box.info {
+            background: linear-gradient(135deg, #e7f3ff 0%, #cce5ff 100%);
+            border-color: #007bff;
+            color: #004085;
+        }
+
+        .footer {
+            background: rgba(45, 55, 72, 0.95);
+            backdrop-filter: blur(20px);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+        
+        .footer p {
+            margin-bottom: 0.5rem;
+            color: #a0aec0;
+        }
+
+        .footer a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .section {
+                padding: 3rem 1.5rem;
+            }
+
+            .section::after {
+                left: 1.5rem;
+                right: 1.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .service-layer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">QuizZee</a>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#tech-stack">Tech Stack</a></li>
+                <li><a href="#api-docs">API Docs</a></li>
+                <li><a href="#database">Database</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="documentation-badge">📚 Complete Documentation</div>
+                <h1>QuizZee</h1>
+                <p class="hero-subtitle">Modern Microservices-Based Quiz Contest Platform</p>
+                <p style="font-size: 1.1rem; margin-bottom: 3rem; opacity: 0.9;">
+                    Scalable • Resilient • Production-Ready
+                </p>
+                <div class="cta-buttons">
+                    <a href="https://github.com/ZeeshanMalik9/Quiz-Competition-Platform--Microservices-Architecture-" class="github-btn" target="_blank">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                        </svg>
+                        View on GitHub
+                    </a>
+                    <a href="#api-docs" class="docs-btn">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                        Explore Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container main-content">
+        <section id="overview" class="section">
+            <h2>Project Overview</h2>
+            <p class="section-intro">
+                QuizZee represents a cutting-edge approach to quiz platform development, leveraging microservices architecture to deliver unprecedented scalability, maintainability, and performance. Built from the ground up with modern Spring technologies and cloud-native principles.
+            </p>
+            
+            <h3>Core Features</h3>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <h3>Advanced User Management</h3>
+                    <p>Complete authentication system with JWT tokens, role-based access control, and secure session management.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">❓</div>
+                    <h3>Intelligent Question Bank</h3>
+                    <p>Sophisticated question management with categorization, difficulty levels, and advanced query capabilities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Dynamic Quiz Engine</h3>
+                    <p>Flexible quiz creation system supporting multiple question types, randomization, and custom templates.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Live Contest Platform</h3>
+                    <p>Real-time contest management with participant tracking, state transitions, and live scoring.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure Scoring System</h3>
+                    <p>Tamper-proof answer validation and scoring without exposing correct answers to client applications.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Service Mesh Architecture</h3>
+                    <p>Resilient microservices communication with service discovery, load balancing, and circuit breakers.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="architecture" class="section">
+            <h2>System Architecture</h2>
+            <p class="section-intro">
+                Built on a robust microservices foundation, QuizZee implements industry-standard patterns for distributed systems, ensuring high availability, fault tolerance, and horizontal scalability.
+            </p>
+            
+            <div class="architecture-visual">
+                <h3 style="margin-bottom: 2rem; color: #2d3748; font-size: 1.6rem;">Request Flow Architecture</h3>
+                <div class="service-flow">
+                    <div class="service-layer">
+                        <div class="service-box">Client Applications</div>
+                    </div>
+                    <div class="flow-arrow">⬇️</div>
+                    <div class="service-layer">
+                        <div class="service-box">API Gateway (8765)</div>
+                    </div>
+                    <div class="flow-arrow">⬇️</div>
+                    <div class="service-layer">
+                        <div class="service-box">Eureka Discovery</div>
+                    </div>
+                    <div class="flow-arrow">⬇️</div>
+                    <div class="service-layer">
+                        <div class="service-box">User Service</div>
+                        <div class="service-box">Question Service</div>
+                        <div class="service-box">Quiz Service</div>
+                        <div class="service-box">Contest Service</div>
+                        <div class="service-box">Submission Service</div>
+                    </div>
+                    <div class="flow-arrow">⬇️</div>
+                    <div class="service-layer">
+                        <div class="service-box">MySQL Database Cluster</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Architectural Principles</h3>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Single Responsibility</h3>
+                    <p>Each microservice handles one specific domain with clear boundaries and well-defined interfaces.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Loose Coupling</h3>
+                    <p>Services communicate through well-defined APIs, allowing independent development and deployment.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>High Availability</h3>
+                    <p>Circuit breakers, retry mechanisms, and graceful degradation ensure system resilience.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Observability</h3>
+                    <p>Comprehensive logging, metrics, and distributed tracing for complete system visibility.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tech-stack" class="section">
+            <h2>Technology Stack</h2>
+            <p class="section-intro">
+                Leveraging the most advanced and proven technologies in the Java ecosystem to deliver enterprise-grade performance and reliability.
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">☕</div>
+                    <h3>Java 17 LTS</h3>
+                    <p>Latest Long-Term Support Java version with modern language features, improved performance, and enhanced security.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🍃</div>
+                    <h3>Spring Boot 3.x</h3>
+                    <p>Cutting-edge Spring framework with native compilation support, reactive programming, and cloud-native features.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌩️</div>
+                    <h3>Spring Cloud</h3>
+                    <p>Complete microservices toolkit including Gateway, Eureka, OpenFeign, and Circuit Breaker patterns.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Netflix Eureka</h3>
+                    <p>Battle-tested service discovery and registration with health checking and load balancing capabilities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Spring Security + JWT</h3>
+                    <p>Comprehensive security framework with stateless JWT authentication and role-based authorization.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗄️</div>
+                    <h3>MySQL + JPA</h3>
+                    <p>Reliable relational database with Spring Data JPA for efficient data access and management.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="api-docs" class="section">
+            <h2>API Documentation</h2>
+             <div class="info-box info">
+                <h3>Authentication</h3>
+                <p><strong>All API endpoints require JWT authentication via the API Gateway.</strong></p>
+                <p>Base URL: <code>http://localhost:8765</code></p>
+                <p>Authorization Header: <code>Bearer &lt;token&gt;</code></p>
+                <p>User ID Header: <code>X-User-Id: &lt;user-uuid&gt;</code></p>
+            </div>
+
+            <div class="api-section">
+                <div class="service-card">
+                    <h3 class="service-title"><span class="service-icon">🏆</span> Contest Service</h3>
+                    <p>Manages contest lifecycle, participant enrollment, and contest state transitions.</p>
+                    
+                    <div class="endpoint post">
+                        <strong><span class="method-badge method-post">POST</span> Create Contest</strong>
+                        <div class="endpoint-url">/CONTEST-SERVICE/contests/create</div>
+                        <p>Creates a new quiz contest with specified parameters.</p>
+                        <pre class="code-block"><code>{
+    "quizId": "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
+    "title": "Finals Week Challenge",
+    "startTime": "2025-09-15T10:00:00Z",
+    "endTime": "2025-09-15T11:00:00Z"
+}</code></pre>
+                    </div>
+
+                    <div class="endpoint post">
+                        <strong><span class="method-badge method-post">POST</span> Join Contest</strong>
+                        <div class="endpoint-url">/CONTEST-SERVICE/contests/{contestId}/join</div>
+                        <p>Allows an authenticated user to join a scheduled contest.</p>
+                    </div>
+                     <div class="endpoint get">
+                        <strong><span class="method-badge method-get">GET</span> Get Contest Participants</strong>
+                        <div class="endpoint-url">/CONTEST-SERVICE/contests/{contestId}/participants</div>
+                        <p>Returns a list of all participants enrolled in the contest.</p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <h3 class="service-title"><span class="service-icon">❓</span> Question Service</h3>
+                    <p>Manages the centralized question bank, including CRUD operations and secure scoring logic.</p>
+                    
+                     <div class="endpoint get">
+                        <strong><span class="method-badge method-get">GET</span> Get All Questions</strong>
+                        <div class="endpoint-url">/QUESTION-SERVICE/question/allQuestions</div>
+                        <p>Retrieves a list of all questions available in the question bank.</p>
+                    </div>
+
+                    <div class="endpoint post">
+                        <strong><span class="method-badge method-post">POST</span> Add Question</strong>
+                        <div class="endpoint-url">/QUESTION-SERVICE/question/addQuestion</div>
+                        <p>Adds a new question to the question bank.</p>
+                        <pre class="code-block"><code>{
+    "questionTitle": "What is the capital of France?",
+    "option1": "Berlin",
+    "option2": "Madrid",
+    "option3": "Paris",
+    "option4": "Rome",
+    "rightAnswer": "Paris",
+    "difficultylevel": "Easy",
+    "category": "Geography"
+}</code></pre>
+                    </div>
+                    
+                    <div class="endpoint post">
+                        <strong><span class="method-badge method-post">POST</span> Calculate Score</strong>
+                        <div class="endpoint-url">/QUESTION-SERVICE/question/getScore</div>
+                        <p>Calculates the score for a given set of responses. This is typically called internally by the Submission Service.</p>
+                        <pre class="code-block"><code>[
+    {
+        "id": 1,
+        "response": "Paris"
+    },
+    {
+        "id": 2,
+        "response": "4"
+    }
+]</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="database" class="section">
+            <h2>Database Architecture</h2>
+            <p class="section-intro">
+                Each microservice maintains its own dedicated MySQL database, adhering to the "Database per Service" pattern. This ensures strong data isolation, independent scalability, and prevents a single point of failure at the database level.
+            </p>
+            
+            <div class="info-box info">
+                <h3>Database Schemas</h3>
+                <p>The system is partitioned into the following logical databases:</p>
+                <ul>
+                    <li><strong>user_db:</strong> Manages user credentials, profiles, and roles.</li>
+                    <li><strong>question_db:</strong> Stores the entire question bank, including options and correct answers.</li>
+                    <li><strong>quiz_db:</strong> Contains quiz templates and structures.</li>
+                    <li><strong>contest_db:</strong> Manages live contest information and participant enrollment.</li>
+                    <li><strong>submission_db:</strong> Records user submissions and calculated scores.</li>
+                </ul>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🗄️</div>
+                    <h3>Data Isolation</h3>
+                    <p>Services own their data completely, communicating via APIs instead of direct database calls, which enhances resilience.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Spring Data JPA</h3>
+                    <p>Leverages the powerful repository pattern for efficient, boilerplate-free data access and object-relational mapping.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Transaction Management</h3>
+                    <p>Ensures data consistency and integrity within each service boundary with declarative, ACID-compliant transactions.</p>
+                </div>
+                 <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Connection Pooling</h3>
+                    <p>Utilizes HikariCP for high-performance database connection management, crucial for a scalable system.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="getting-started" class="section">
+            <h2>Getting Started</h2>
+            <p class="section-intro">Follow these steps to get the QuizZee platform running locally on your machine for development and testing.</p>
+
+            <h3>Prerequisites</h3>
+             <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                <li>Java Development Kit (JDK) 17 or higher</li>
+                <li>Apache Maven 3.6+</li>
+                <li>MySQL Server 8.0+</li>
+                <li>A Git client for version control</li>
+                <li>Your favorite IDE (IntelliJ IDEA, VS Code, or Eclipse)</li>
+            </ul>
+            
+            <h3>Quick Setup</h3>
+            <pre class="code-block"><code># 1. Clone the repository from GitHub
+git clone https://github.com/ZeeshanMalik9/Quiz-Competition-Platform--Microservices-Architecture-
+
+# 2. Navigate to the project's root directory
+cd Quiz-Competition-Platform--Microservices-Architecture-
+
+# 3. Build all microservices using Maven
+mvn clean install
+
+# 4. Start the services in the correct order (see below)</code></pre>
+
+            <h3>Service Startup Order</h3>
+            <div class="info-box warning">
+                <p><strong>Important:</strong> Services must be started in the following order to ensure proper registration and dependency resolution.</p>
+                <ol>
+                    <li><strong>Eureka Server</strong> (Service Registry on port 8761)</li>
+                    <li><strong>API Gateway</strong> (Single Entry Point on port 8765)</li>
+                    <li><strong>User Service</strong></li>
+                    <li><strong>Question Service</strong></li>
+                    <li><strong>Quiz Service</strong></li>
+                    <li><strong>Contest Service</strong></li>
+                    <li><strong>Submission Service</strong></li>
+                </ol>
+            </div>
+        </section>
+
+         <section id="roadmap" class="section">
+            <h2>Future Roadmap</h2>
+            <p class="section-intro">
+                QuizZee is an evolving platform. Here are some of the exciting features and improvements planned for the future.
+            </p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>Frontend Application</h3>
+                    <p>Develop a modern, reactive frontend using React or Vue.js for an enhanced user experience.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Containerization</h3>
+                    <p>Implement Docker and Docker Compose for simplified, consistent deployment across all environments.</p>
+                </div>
+                 <div class="feature-card">
+                    <h3>Real-time Features</h3>
+                    <p>Integrate WebSockets for live leaderboards, real-time notifications, and interactive contest updates.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Enhanced Observability</h3>
+                    <p>Set up a monitoring stack with Prometheus, Grafana, and distributed tracing using Jaeger or Zipkin.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Asynchronous Communication</h3>
+                    <p>Introduce a message broker like RabbitMQ or Kafka for event-driven, asynchronous workflows.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>CI/CD Pipeline</h3>
+                    <p>Automate the build, test, and deployment process using GitHub Actions or Jenkins.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 QuizZee - A Modern Microservices Quiz Platform</p>
+            <p>Built with ❤️ using Spring Boot, Spring Cloud, and MySQL.</p>
+            <a href="https://github.com/ZeeshanMalik9/Quiz-Competition-Platform--Microservices-Architecture-" target="_blank">
+                Contribute on GitHub
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // Background particle animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const bgAnimation = document.getElementById('bgAnimation');
+            const particleCount = 50;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 20 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 6}s`;
+                particle.style.animationDuration = `${Math.random() * 4 + 4}s`;
+                bgAnimation.appendChild(particle);
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add fade-in animation on scroll
+        const sections = document.querySelectorAll('.section');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
